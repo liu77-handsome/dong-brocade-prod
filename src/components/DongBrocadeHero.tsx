@@ -89,6 +89,10 @@ export default function DongBrocadeHero() {
     setResumeRotationOnExit(true);
   };
 
+  const handleRemoveCard = (indexToRemove: number) => {
+    setConfirmedCards((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
   const handlePointerDown = (e: PointerEvent) => {
     if (selectedCard) return;
     
@@ -299,7 +303,7 @@ export default function DongBrocadeHero() {
         {/* Bottom Placeholders (Foreground) */}
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-4 md:gap-8 z-20 pointer-events-none">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="w-[96px] h-[64px] md:w-[164px] md:h-[108px] relative rounded-2xl border border-stone-200 bg-white/75 backdrop-blur-sm flex items-center justify-center overflow-hidden shadow-lg">
+            <div key={i} className="w-[96px] h-[64px] md:w-[164px] md:h-[108px] relative rounded-2xl border border-stone-200 bg-white/75 backdrop-blur-sm flex items-center justify-center overflow-hidden shadow-lg pointer-events-auto">
               <div className="absolute -top-1 -left-1 w-6 h-6 border-t-2 border-l-2 border-stone-900/50" />
               <div className="absolute -top-1 -right-1 w-6 h-6 border-t-2 border-r-2 border-stone-900/50" />
               <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-2 border-l-2 border-stone-900/50" />
@@ -309,14 +313,19 @@ export default function DongBrocadeHero() {
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="w-full h-full"
+                  className="w-full h-full group relative cursor-pointer"
+                  onClick={() => handleRemoveCard(i)}
+                  title="点击移除"
                 >
                   <img
                     src={confirmedCards[i].landscapeImage}
                     alt={`${confirmedCards[i].name} landscape`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     draggable={false}
                   />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <X className="text-white w-6 h-6 md:w-8 md:h-8" />
+                  </div>
                 </motion.div>
               )}
 
