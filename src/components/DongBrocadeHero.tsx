@@ -7,6 +7,31 @@ const CARDS = DONG_BROCADE_CARDS;
 const MAX_CONFIRMED_CARDS = 3;
 const normalizeRotation = (value: number) => ((value % 360) + 360) % 360;
 
+const COPY = {
+  zh: {
+    title: ['织出你的侗锦灵感', '挑选纹样，生成专属侗锦图案'],
+    subtitle: '从 50 张侗锦纹样卡中挑选 3 张你喜欢的图样，组合生成属于你的侗锦设计。',
+    cta: '开始生成',
+    languageToggle: 'English',
+    slotLabel: '已选纹样',
+    tapToFlip: '点击翻面',
+    confirm: '确认加入',
+    added: '已加入',
+    full: '已选满',
+  },
+  en: {
+    title: ['Weave Your Dong Brocade Story', 'Choose motifs and compose your own pattern'],
+    subtitle: 'Pick three motifs from 50 authentic Dong brocade cards to create your own Dong brocade composition.',
+    cta: 'Start Creating',
+    languageToggle: '中文',
+    slotLabel: 'Selected',
+    tapToFlip: 'Tap To Flip',
+    confirm: 'Confirm',
+    added: 'Added',
+    full: 'Full',
+  },
+} as const;
+
 type SelectedCardOrigin = {
   x: number;
   y: number;
@@ -27,6 +52,7 @@ const normalizeDegrees = (value: number) => ((value % 360) + 540) % 360 - 180;
 export default function DongBrocadeHero() {
   const [selectedCard, setSelectedCard] = useState<DongBrocadeCard | null>(null);
   const [selectedCardOrigin, setSelectedCardOrigin] = useState<SelectedCardOrigin | null>(null);
+  const [languageMode, setLanguageMode] = useState<keyof typeof COPY>('zh');
   const [isFlipped, setIsFlipped] = useState(true);
   const [confirmedCards, setConfirmedCards] = useState<DongBrocadeCard[]>([]);
   const [rotationPaused, setRotationPaused] = useState(false);
@@ -42,6 +68,7 @@ export default function DongBrocadeHero() {
   const isSelectedCardConfirmed = selectedCard
     ? confirmedCards.some((card) => card.code === selectedCard.code)
     : false;
+  const copy = COPY[languageMode];
 
   const handleConfirm = (e: PointerEvent | MouseEvent) => {
     e.stopPropagation();
@@ -168,6 +195,15 @@ export default function DongBrocadeHero() {
     <div className="min-h-screen w-full bg-stone-100 flex items-center justify-center p-3 md:p-8 lg:p-10 font-sans select-none">
       {/* iPad Pro 11 Device Frame - Landscape */}
       <div className="relative w-full max-w-[1320px] aspect-[1280/880] bg-white overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] rounded-[3.25rem] border-[10px] md:border-[12px] border-stone-900 flex flex-col items-center justify-center">
+        <div className="absolute top-8 right-8 z-30 pointer-events-auto">
+          <button
+            type="button"
+            onClick={() => setLanguageMode((current) => (current === 'zh' ? 'en' : 'zh'))}
+            className="rounded-full border border-stone-900/10 bg-white/95 px-4 py-2 text-xs font-semibold tracking-[0.24em] text-stone-900 shadow-lg transition hover:bg-stone-50"
+          >
+            {copy.languageToggle}
+          </button>
+        </div>
         <div 
           ref={containerRef} 
           className="absolute inset-0 overflow-hidden touch-none"
@@ -178,21 +214,22 @@ export default function DongBrocadeHero() {
         >
           {/* Central Content (Inside the arc) */}
           <div className="absolute inset-0 flex flex-col items-center justify-center z-0 pointer-events-none">
-            <div className="text-center max-w-2xl px-8 mt-[2vh] md:mt-[4vh]">
+            <div className="text-center max-w-3xl px-8 mt-[3vh] md:mt-[5vh]">
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-4xl md:text-5xl font-serif text-stone-900 mb-6 tracking-tight leading-tight"
+                className="text-4xl md:text-[3.35rem] font-serif text-stone-900 mb-5 tracking-tight leading-[1.06]"
               >
-                Create Stunning Dong Brocade<br />Photos Instantly
+                {copy.title[0]}<br />
+                <span className="text-[0.7em] text-stone-800">{copy.title[1]}</span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-sm md:text-base text-stone-600 mb-10 max-w-lg mx-auto"
+                className="text-sm md:text-base text-stone-600 mb-10 max-w-2xl mx-auto leading-relaxed"
               >
-                Pick three motifs from 50 authentic Dong brocade cards to generate your unique Dong brocade design.
+                {copy.subtitle}
               </motion.p>
               <motion.button
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -200,9 +237,9 @@ export default function DongBrocadeHero() {
                 transition={{ delay: 0.2 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-black text-white px-10 py-4 rounded-full font-bold text-xs tracking-widest uppercase shadow-xl hover:bg-stone-800 transition-colors pointer-events-auto"
+                className="bg-black text-white px-10 py-4 rounded-full font-bold text-xs tracking-[0.22em] shadow-xl hover:bg-stone-800 transition-colors pointer-events-auto"
               >
-                START GENERATING NOW
+                {copy.cta}
               </motion.button>
             </div>
           </div>
@@ -284,8 +321,9 @@ export default function DongBrocadeHero() {
               )}
 
               {!confirmedCards[i] && (
-                <div className="text-stone-500 text-[10px] md:text-xs font-mono tracking-[0.3em]">
-                  0{i + 1}
+                <div className="flex flex-col items-center gap-1 text-stone-500">
+                  <div className="text-[10px] md:text-xs font-mono tracking-[0.3em]">0{i + 1}</div>
+                  <div className="text-[8px] md:text-[9px] tracking-[0.16em]">{copy.slotLabel}</div>
                 </div>
               )}
             </div>
@@ -417,7 +455,7 @@ export default function DongBrocadeHero() {
                   />
                   <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 bg-gradient-to-t from-black/90 via-black/55 to-transparent flex flex-col items-center gap-4">
                     <div className="text-white/90 font-mono text-[10px] md:text-xs tracking-[0.3em]">
-                      TAP TO FLIP
+                      {copy.tapToFlip}
                     </div>
 
                     <motion.button
@@ -431,7 +469,7 @@ export default function DongBrocadeHero() {
                           : 'bg-white text-stone-950 hover:bg-stone-100'
                       }`}
                     >
-                      {isSelectedCardConfirmed ? 'ADDED' : confirmedCards.length >= MAX_CONFIRMED_CARDS ? 'FULL' : 'CONFIRM'}
+                      {isSelectedCardConfirmed ? copy.added : confirmedCards.length >= MAX_CONFIRMED_CARDS ? copy.full : copy.confirm}
                     </motion.button>
 
                     <div className="flex gap-2">
