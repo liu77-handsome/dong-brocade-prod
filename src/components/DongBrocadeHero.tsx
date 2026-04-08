@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, PointerEvent, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { DONG_BROCADE_CARDS, DongBrocadeCard } from '../data/dongBrocadeCards';
+import { type LanguageMode } from '../lib/resultChannel';
 
 const CARDS = DONG_BROCADE_CARDS;
 const MAX_CONFIRMED_CARDS = 3;
@@ -49,10 +50,20 @@ const getExpandedCardSize = () =>
 
 const normalizeDegrees = (value: number) => ((value % 360) + 540) % 360 - 180;
 
-export default function DongBrocadeHero() {
+type DongBrocadeHeroProps = {
+  languageMode?: LanguageMode;
+  onLanguageChange?: (languageMode: LanguageMode) => void;
+  onStart?: (cardCodes: string[], languageMode: LanguageMode) => void;
+};
+
+export default function DongBrocadeHero({
+  languageMode: controlledLanguageMode,
+  onLanguageChange,
+  onStart,
+}: DongBrocadeHeroProps) {
   const [selectedCard, setSelectedCard] = useState<DongBrocadeCard | null>(null);
   const [selectedCardOrigin, setSelectedCardOrigin] = useState<SelectedCardOrigin | null>(null);
-  const [languageMode, setLanguageMode] = useState<keyof typeof COPY>('zh');
+  const [internalLanguageMode, setInternalLanguageMode] = useState<keyof typeof COPY>('zh');
   const [isFlipped, setIsFlipped] = useState(true);
   const [confirmedCards, setConfirmedCards] = useState<DongBrocadeCard[]>([]);
   const [rotationPaused, setRotationPaused] = useState(false);
@@ -68,7 +79,15 @@ export default function DongBrocadeHero() {
   const isSelectedCardConfirmed = selectedCard
     ? confirmedCards.some((card) => card.code === selectedCard.code)
     : false;
+  const languageMode = controlledLanguageMode ?? internalLanguageMode;
   const copy = COPY[languageMode];
+
+  const setLanguageMode = (nextLanguageMode: keyof typeof COPY) => {
+    if (controlledLanguageMode === undefined) {
+      setInternalLanguageMode(nextLanguageMode);
+    }
+    onLanguageChange?.(nextLanguageMode);
+  };
 
   const handleConfirm = (e: PointerEvent | MouseEvent) => {
     e.stopPropagation();
@@ -202,7 +221,7 @@ export default function DongBrocadeHero() {
         <div className="absolute top-8 right-8 z-30 pointer-events-auto">
           <button
             type="button"
-            onClick={() => setLanguageMode((current) => (current === 'zh' ? 'en' : 'zh'))}
+            onClick={() => setLanguageMode(languageMode === 'zh' ? 'en' : 'zh')}
             className="rounded-full border border-stone-900/10 bg-white/95 px-4 py-2 text-xs font-semibold tracking-[0.24em] text-stone-900 shadow-lg transition hover:bg-stone-50"
           >
             {copy.languageToggle}
@@ -239,12 +258,31 @@ export default function DongBrocadeHero() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-black text-white px-10 py-4 rounded-full font-bold text-xs tracking-[0.22em] shadow-xl hover:bg-stone-800 transition-colors pointer-events-auto"
+                whileHover={{ scale: confirmedCards.length === MAX_CONFIRMED_CARDS ? 1.05 : 1 }}
+                whileTap={{ scale: confirmedCards.length === MAX_CONFIRMED_CARDS ? 0.95 : 1 }}
+                onClick={() => {
+                  if (confirmedCards.length === MAX_CONFIRMED_CARDS) {
+                    onStart?.(confirmedCards.map((card) => card.code), languageMode);
+                  }
+                }}
+                disabled={confirmedCards.length !== MAX_CONFIRMED_CARDS}
+                className={`px-10 py-4 rounded-full font-bold text-xs tracking-[0.22em] shadow-xl transition-colors pointer-events-auto ${
+                  confirmedCards.length === MAX_CONFIRMED_CARDS
+                    ? 'bg-black text-white hover:bg-stone-800'
+                    : 'bg-stone-300 text-stone-500 cursor-not-allowed'
+                }`}
               >
                 {copy.cta}
               </motion.button>
+              <p className="mt-4 text-[11px] tracking-[0.16em] text-stone-500">
+                {confirmedCards.length === MAX_CONFIRMED_CARDS
+                  ? languageMode === 'zh'
+                    ? '已选 3 张，点击后同步到结果页'
+                    : '3 motifs selected, click to sync the result page'
+                  : languageMode === 'zh'
+                    ? '请选择 3 张纹样卡'
+                    : 'Choose 3 motif cards'}
+              </p>
             </div>
           </div>
 
@@ -315,7 +353,7 @@ export default function DongBrocadeHero() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="w-full h-full group relative cursor-pointer"
                   onClick={() => handleRemoveCard(i)}
-                  title="点击移除"
+                  title={languageMode === 'zh' ? '点击移除' : 'Click to remove'}
                 >
                   <img
                     src={confirmedCards[i].landscapeImage}
