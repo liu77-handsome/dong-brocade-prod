@@ -283,6 +283,13 @@ export default function DongBrocadeHero({
                     ? '请选择 3 张纹样卡'
                     : 'Choose 3 motif cards'}
               </p>
+              <button
+                type="button"
+                onClick={() => window.open('/result', 'dong-brocade-result')}
+                className="mt-4 rounded-full border border-stone-900/12 bg-white/85 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] text-stone-700 shadow-sm transition hover:bg-white pointer-events-auto"
+              >
+                {languageMode === 'zh' ? '打开结果页' : 'Open Result Page'}
+              </button>
             </div>
           </div>
 

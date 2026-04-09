@@ -1,15 +1,19 @@
 export type LanguageMode = 'zh' | 'en';
+export type ResultStatus = 'generating' | 'ready';
 
 export type ResultPayload = {
   cardCodes: string[];
   languageMode: LanguageMode;
-  generatedAt: number;
+  status: ResultStatus;
+  requestedAt: number;
+  generatedAt: number | null;
 };
 
 const RESULT_CHANNEL_NAME = 'dong-brocade-result-channel';
 const RESULT_STORAGE_KEY = 'dong-brocade-result-state';
 
 const isLanguageMode = (value: unknown): value is LanguageMode => value === 'zh' || value === 'en';
+const isResultStatus = (value: unknown): value is ResultStatus => value === 'generating' || value === 'ready';
 
 const isResultPayload = (value: unknown): value is ResultPayload => {
   if (!value || typeof value !== 'object') {
@@ -21,7 +25,9 @@ const isResultPayload = (value: unknown): value is ResultPayload => {
     Array.isArray(payload.cardCodes) &&
     payload.cardCodes.every((cardCode) => typeof cardCode === 'string') &&
     isLanguageMode(payload.languageMode) &&
-    typeof payload.generatedAt === 'number'
+    isResultStatus(payload.status) &&
+    typeof payload.requestedAt === 'number' &&
+    (typeof payload.generatedAt === 'number' || payload.generatedAt === null)
   );
 };
 
