@@ -19,15 +19,17 @@ const ensureDir = (dirPath) => {
 const toPosixPath = (value) => value.replace(/\\/g, '/');
 const getFileStem = (fileName) => fileName.replace(/\.[^.]+$/, '');
 
-const folderNames = fs.existsSync(taggedPatternDir)
-  ? fs
-      .readdirSync(taggedPatternDir, { withFileTypes: true })
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => entry.name)
-      .sort((left, right) =>
-        left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' }),
-      )
-  : [];
+if (!fs.existsSync(taggedPatternDir)) {
+  throw new Error('Missing required folder: 纹样打标');
+}
+
+const folderNames = fs
+  .readdirSync(taggedPatternDir, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .sort((left, right) =>
+    left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' }),
+  );
 
 const manifestEntries = folderNames
   .map((folderName) => {
@@ -102,5 +104,9 @@ ${manifestEntries
 
 ensureDir(outputDir);
 fs.writeFileSync(outputFile, output, 'utf8');
+
+if (manifestEntries.length === 0) {
+  throw new Error('No result assets were generated from 纹样打标');
+}
 
 console.log(`Generated ${manifestEntries.length} result assets in ${path.relative(repoRoot, outputFile)}`);
