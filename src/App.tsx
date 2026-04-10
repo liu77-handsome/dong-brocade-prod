@@ -8,7 +8,7 @@ import DongBrocadeHero from './components/DongBrocadeHero';
 import DongBrocadeDownloadPage from './components/DongBrocadeDownloadPage';
 import DongBrocadeResult from './components/DongBrocadeResultGallery';
 import { DONG_BROCADE_CARDS } from './data/dongBrocadeCards';
-import { findResultAsset } from './lib/resultAssetIndex';
+import { findResultAsset } from './lib/resultAssetRegistry';
 import {
   LanguageMode,
   publishResult,

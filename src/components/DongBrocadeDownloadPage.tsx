@@ -3,7 +3,7 @@ import { Download, ExternalLink } from 'lucide-react';
 import {
   findResultAssetByPublicId,
   resolveResultAssetImageUrl,
-} from '../lib/resultAssetIndex';
+} from '../lib/resultAssetRegistry';
 import { type LanguageMode } from '../lib/resultChannel';
 
 type DongBrocadeDownloadPageProps = {

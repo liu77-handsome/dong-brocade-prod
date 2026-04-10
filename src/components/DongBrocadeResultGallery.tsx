@@ -8,7 +8,7 @@ import MatrixRevealImage from './MatrixRevealImage';
 import {
   type ResultAsset,
   resolveResultAssetImageUrl,
-} from '../lib/resultAssetIndex';
+} from '../lib/resultAssetRegistry';
 import { type LanguageMode, type ResultStatus } from '../lib/resultChannel';
 
 type ConnotationEntry = {
