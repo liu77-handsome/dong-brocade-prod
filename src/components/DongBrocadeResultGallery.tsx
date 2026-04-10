@@ -8,7 +8,7 @@ import MatrixRevealImage from './MatrixRevealImage';
 import {
   type ResultAsset,
   resolveResultAssetImageUrl,
-} from '../lib/resultAssets';
+} from '../lib/resultAssetIndex';
 import { type LanguageMode, type ResultStatus } from '../lib/resultChannel';
 
 type ConnotationEntry = {
@@ -395,37 +395,23 @@ export default function DongBrocadeResultGallery({
                     </div>
 
                     {isGenerating && (
-                      <div className="absolute inset-x-[10%] bottom-[7%]">
-                        <p className="mb-4 text-center text-xs tracking-[0.18em] text-white/60">
-                          {copy.generatingSubtitle}
-                        </p>
-                        <div className="mb-4 flex items-center justify-center gap-2">
-                          {copy.generatingSteps.map((step, index) => (
-                            <motion.div
-                              key={step}
-                              className="h-2.5 w-2.5 rounded-full bg-white/40"
-                              animate={{
-                                scale: [1, 1.48, 1],
-                                opacity: [0.3, 1, 0.3],
-                              }}
-                              transition={{
-                                duration: 1.5,
-                                repeat: Infinity,
-                                delay: index * 0.24,
-                              }}
-                            />
-                          ))}
-                        </div>
-                        <div className="grid grid-cols-3 gap-3">
-                          {copy.generatingSteps.map((step) => (
-                            <div
-                              key={step}
-                              className="rounded-2xl border border-white/10 bg-white/6 px-3 py-3 text-center text-[10px] font-semibold tracking-[0.2em] text-white/78 backdrop-blur"
-                            >
-                              {step}
-                            </div>
-                          ))}
-                        </div>
+                      <div className="pointer-events-none absolute inset-x-[14%] bottom-[6%] flex items-center justify-center gap-3">
+                        {[0, 1, 2].map((index) => (
+                          <motion.div
+                            key={index}
+                            className="h-2.5 w-10 rounded-full bg-white/20 shadow-[0_0_24px_rgba(255,245,220,0.18)]"
+                            animate={{
+                              opacity: [0.16, 0.82, 0.16],
+                              scaleX: [0.72, 1, 0.72],
+                            }}
+                            transition={{
+                              duration: 1.8,
+                              repeat: Infinity,
+                              delay: index * 0.18,
+                              ease: 'easeInOut',
+                            }}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
