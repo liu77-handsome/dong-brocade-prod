@@ -220,6 +220,23 @@ export default function App() {
     };
   }, [resultPayload, route.page]);
 
+  useEffect(() => {
+    const titleMap = {
+      zh: {
+        hero: '侗锦图元选择页',
+        result: '侗锦纹样生成页',
+        download: '侗锦纹样下载页',
+      },
+      en: {
+        hero: 'Dong Brocade Motif Selector',
+        result: 'Dong Brocade Pattern Generator',
+        download: 'Dong Brocade Download',
+      },
+    } as const;
+
+    document.title = titleMap[languageMode][route.page];
+  }, [languageMode, route.page]);
+
   const handleStart = (cardCodes: string[], nextLanguageMode: LanguageMode) => {
     startGeneration(cardCodes, nextLanguageMode);
   };

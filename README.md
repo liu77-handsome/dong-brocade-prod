@@ -4,9 +4,9 @@
 
 当前项目包含三个独立页面：
 
-- `/`：图元选择页。用户选择 3 个图元并点击开始生成。
-- `/result`：结果页。独立接收选择页的生成消息，播放动画并显示最终纹样、文化属性与二维码下载。
-- `/download`：下载页。二维码会指向这个稳定入口，再跳转到对应最终图片。
+- `/#/`：图元选择页。用户选择 3 个图元并点击开始生成。
+- `/#/result`：纹样生成页。独立接收选择页的生成消息，播放动画并显示最终纹样、文化属性与二维码下载。
+- `/#/download`：结果下载页。二维码会指向这个稳定入口，再跳转到对应最终图片。
 
 ## 当前功能
 
@@ -66,13 +66,13 @@ npm run dev
 默认地址：
 
 - 选择页：http://localhost:3000/
-- 结果页：http://localhost:3000/result
+- 纹样生成页：http://localhost:3000/#/result
 
 ## 使用方式
 
 1. 启动项目。
 2. 打开选择页 `/`。
-3. 再单独打开结果页 `/result`。
+3. 再单独打开纹样生成页 `/#/result`。
 4. 在选择页选满 3 个图元。
 5. 点击“开始生成”。
 6. 结果页会独立收到消息并开始生成动画。
@@ -83,7 +83,7 @@ npm run dev
 二维码不会直接指向构建后的静态图片文件名，而是指向一个稳定下载页：
 
 ```text
-/download?asset=DJxxx__文件名&lang=zh
+/#/download?asset=DJxxx__文件名&lang=zh
 ```
 
 这样做的好处：
@@ -116,7 +116,7 @@ VITE_PUBLIC_BASE_URL="https://brocade.example.com"
 1. 项目已经部署到公网服务器或静态托管平台。
 2. 站点绑定了公网域名。
 3. `VITE_PUBLIC_BASE_URL` 配置成这个公网域名。
-4. 托管平台支持 SPA 路由回退，否则 `/result` 和 `/download` 会 404。
+4. 当前项目已经切换到 hash 路由，核心访问入口使用 `/#/result` 和 `/#/download`。
 
 ### 标准配置流程
 
@@ -161,24 +161,19 @@ VITE_PUBLIC_BASE_URL=https://your-domain.com
 6. 部署完成后验证以下地址：
 
 - `https://your-domain.com/`
-- `https://your-domain.com/result`
-- `https://your-domain.com/download?asset=某个实际ID`
+- `https://your-domain.com/#/result`
+- `https://your-domain.com/#/download?asset=某个实际ID`
 
-### 重要：SPA 路由回退
+### 路由说明
 
-本项目是单页应用，`/result` 和 `/download` 都需要回退到 `index.html`。
+当前项目已经统一改为 hash 路由：
 
-如果不配置回退，浏览器直接访问这些地址时会 404。
+- `/#/result`
+- `/#/download`
 
-你需要在托管平台配置类似规则：
+这样做的目的是避免在部分静态托管环境中直接访问 `/result`、`/download` 时出现 404。
 
-- 所有未命中的路径都返回 `index.html`
-
-例如：
-
-- Vercel：在项目设置或 `vercel.json` 中配置 rewrites
-- Netlify：在 `_redirects` 中配置 `/* /index.html 200`
-- Nginx：使用 `try_files $uri /index.html;`
+项目中仍然保留了 [vercel.json](/E:/MCdemo/dong-brocade/vercel.json#L1)，用于兼容 Vercel 的静态部署。
 
 ## 推荐部署方式
 
@@ -233,13 +228,13 @@ VITE_PUBLIC_BASE_URL=https://your-domain.com
 
 部署完成后，建议按这个顺序验证：
 
-1. 在公网域名打开选择页与结果页。
+1. 在公网域名打开图元选择页与纹样生成页。
 2. 生成任意一张综合纹样。
 3. 用手机扫描结果页二维码。
 4. 确认手机进入的是：
 
 ```text
-https://your-domain.com/download?asset=...
+https://your-domain.com/#/download?asset=...
 ```
 
 5. 确认页面随后能打开最终图片。
@@ -260,7 +255,7 @@ https://your-domain.com/download?asset=...
 
 原因：
 
-- 没有配置 SPA 路由回退
+- 当前项目应使用 `/#/result` 和 `/#/download`，而不是直接访问 `/result` 或 `/download`
 
 ### 3. 二维码能打开，但不是最终图片
 

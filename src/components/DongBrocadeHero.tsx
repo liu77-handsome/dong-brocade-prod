@@ -285,10 +285,15 @@ export default function DongBrocadeHero({
               </p>
               <button
                 type="button"
-                onClick={() => window.open('/#/result', 'dong-brocade-result')}
+                onClick={() =>
+                  window.open(
+                    `${window.location.origin}/#/result?lang=${languageMode}`,
+                    'dong-brocade-result',
+                  )
+                }
                 className="mt-4 rounded-full border border-stone-900/12 bg-white/85 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] text-stone-700 shadow-sm transition hover:bg-white pointer-events-auto"
               >
-                {languageMode === 'zh' ? '打开结果页' : 'Open Result Page'}
+                {languageMode === 'zh' ? '打开生成页' : 'Open Generation Page'}
               </button>
             </div>
           </div>
