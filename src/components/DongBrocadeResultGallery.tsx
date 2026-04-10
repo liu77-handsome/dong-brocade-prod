@@ -371,7 +371,7 @@ export default function DongBrocadeResultGallery({
 
                 {showImageStage && (
                   <div className="absolute inset-[6%] overflow-hidden rounded-[1.9rem] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(154,109,121,0.28),_transparent_52%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))]">
-                    <div className="absolute inset-[8%] flex items-center justify-center rounded-[1.7rem] border border-white/8 bg-black/14 p-6 md:p-8">
+                    <div className="absolute inset-[4%] flex items-center justify-center overflow-hidden rounded-[1.7rem] border border-white/8 bg-black/14 p-0">
                       {resolvedImageUrl ? (
                         <MatrixRevealImage
                           replayKey={generationKey}

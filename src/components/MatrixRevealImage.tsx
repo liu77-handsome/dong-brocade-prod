@@ -108,11 +108,8 @@ export default function MatrixRevealImage({
     <div className={`flex h-full w-full items-center justify-center ${className ?? ''}`}>
       <div
         key={replayKey}
-        className="relative max-h-full w-full max-w-full overflow-hidden rounded-[1.35rem]"
+        className="relative h-full w-full overflow-hidden rounded-[1.35rem]"
         style={{
-          aspectRatio: `${dimensions.width} / ${dimensions.height}`,
-          height: '100%',
-          width: 'auto',
           background: '#000000',
         }}
       >

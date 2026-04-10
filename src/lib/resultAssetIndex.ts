@@ -39,24 +39,35 @@ const normalizePath = (value: string) => value.replace(/\\/g, '/');
 const getPublicId = (folderName: string, fileStem: string) => `${folderName}__${fileStem}`;
 
 const getFolderNameFromFinalEffectPath = (assetPath: string) => {
-  const match = normalizePath(assetPath).match(
-    new RegExp(`${TAGGED_PATTERN_DIR}/([^/]+)/${FINAL_EFFECT_DIR}/[^/]+$`),
-  );
-  return match?.[1] ?? null;
+  const segments = normalizePath(assetPath).split('/');
+  const taggedDirIndex = segments.indexOf(TAGGED_PATTERN_DIR);
+  const finalEffectIndex = segments.indexOf(FINAL_EFFECT_DIR);
+
+  if (taggedDirIndex === -1 || finalEffectIndex === -1 || finalEffectIndex - taggedDirIndex !== 2) {
+    return null;
+  }
+
+  return segments[taggedDirIndex + 1] ?? null;
 };
 
 const getMotifCodeFromMarkerPath = (assetPath: string) => {
-  const match = normalizePath(assetPath).match(
-    new RegExp(`${TAGGED_PATTERN_DIR}/([^/]+)/((?:TY|DJ)\\d+)/[^/]+$`),
-  );
+  const segments = normalizePath(assetPath).split('/');
+  const taggedDirIndex = segments.indexOf(TAGGED_PATTERN_DIR);
 
-  if (!match) {
+  if (taggedDirIndex === -1) {
+    return null;
+  }
+
+  const folderName = segments[taggedDirIndex + 1];
+  const motifCode = segments[taggedDirIndex + 2];
+
+  if (!folderName || !motifCode || !/^(TY|DJ)\d+$/i.test(motifCode)) {
     return null;
   }
 
   return {
-    folderName: match[1],
-    motifCode: match[2],
+    folderName,
+    motifCode,
   };
 };
 
